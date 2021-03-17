@@ -1,22 +1,22 @@
 <tab>
     <div class="container">
-    <table id="tabCovid" class="table table-bordered ">
-        <thead>
-        <tr>
-            <th scope="col">Pays</th>
-            <th scope="col">Cas</th>
-            <th scope="col">Guéris</th>
-            <th scope="col">Morts</th>
-            <th scope="col">Cas total</th>
-            <th scope="col">Guéris total</th>
-            <th scope="col">Morts total</th>
-        </tr>
-        </thead>
-        <tbody>
+        <table class="table table-bordered " id="tabCovid">
+            <thead>
+            <tr>
+                <th scope="col">Pays</th>
+                <th scope="col">Cas</th>
+                <th scope="col">Guéris</th>
+                <th scope="col">Morts</th>
+                <th scope="col">Cas total</th>
+                <th scope="col">Guéris total</th>
+                <th scope="col">Morts total</th>
+            </tr>
+            </thead>
+            <tbody>
 
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
     </div>
     <script>
         export default {
@@ -36,7 +36,7 @@
                     row += "<td class='text-danger'>" + currentCountry.totaldeaths + "</td>"
                     row += "</tr>"
 
-                    $('table').find('tbody').append( row );
+                    $('table').find('tbody').append(row);
                 }
                 $(document).ready(function () {
                     $('#tabCovid').DataTable();

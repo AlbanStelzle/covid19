@@ -50,23 +50,23 @@ am4core.ready(function () {
         var di = selectcountries(getCountryNameFromCountryCode(countrycode))
         //   console.log(di)
         let diWeek = {};
-        for (var i = 0,w=0, z = 0; i < di.length; i+=7,w++) {
+        for (var i = 0, w = 0, z = 0; i < di.length; i += 7, w++) {
             let active = 0
             let confirmed = 0
             let recovered = 0
             let deaths = 0
             let dates = null;
-            if((di.length-i) < 7){
-                console.log((di.length-i));
+            if ((di.length - i) < 7) {
+                console.log((di.length - i));
                 for (var y = 0; y < 7; y++, z++) {
 
-                    active += di[z-(di.length-i)].active
-                    confirmed += di[z-(di.length-i)].confirmed
-                    recovered += di[z-(di.length-i)].recovered
-                    deaths += di[z-(di.length-i)].deaths
-                    dates = di[z-(di.length-i)].date
+                    active += di[z - (di.length - i)].active
+                    confirmed += di[z - (di.length - i)].confirmed
+                    recovered += di[z - (di.length - i)].recovered
+                    deaths += di[z - (di.length - i)].deaths
+                    dates = di[z - (di.length - i)].date
                 }
-            }else {
+            } else {
                 for (var y = 0; y < 7; y++, z++) {
 
                     active += di[z].active
@@ -78,10 +78,10 @@ am4core.ready(function () {
 
             }
             diWeek[w] = {
-                active: (active/7),
-                confirmed: confirmed/7,
-                deaths: deaths/7,
-                recovered: recovered/7,
+                active: (active / 7),
+                confirmed: confirmed / 7,
+                deaths: deaths / 7,
+                recovered: recovered / 7,
                 date: dates
             }
         }
@@ -200,23 +200,23 @@ am4core.ready(function () {
         //   console.log(di)
         let diWeek = {};
         let diWeekTotal = {};
-        for (var i = 0,w=0, z = 0; i < di.length; i+=7,w++) {
+        for (var i = 0, w = 0, z = 0; i < di.length; i += 7, w++) {
             let active = 0
             let confirmed = 0
             let recovered = 0
             let deaths = 0
             let dates = null;
-            if((di.length-i) < 7){
-                console.log((di.length-i));
+            if ((di.length - i) < 7) {
+                console.log((di.length - i));
                 for (var y = 0; y < 7; y++, z++) {
 
-                    active += di[z-(di.length-i)].active
-                    confirmed += di[z-(di.length-i)].confirmed
-                    recovered += di[z-(di.length-i)].recovered
-                    deaths += di[z-(di.length-i)].deaths
-                    dates = di[z-(di.length-i)].date
+                    active += di[z - (di.length - i)].active
+                    confirmed += di[z - (di.length - i)].confirmed
+                    recovered += di[z - (di.length - i)].recovered
+                    deaths += di[z - (di.length - i)].deaths
+                    dates = di[z - (di.length - i)].date
                 }
-            }else {
+            } else {
                 for (var y = 0; y < 7; y++, z++) {
 
                     active += di[z].active
@@ -234,15 +234,15 @@ am4core.ready(function () {
                 recovered: recovered / 7,
                 date: dates
             }
-            if(w==0) {
+            if (w == 0) {
                 diWeek[w] = diWeekTotal[w]
 
-            }else{
+            } else {
                 diWeek[w] = {
-                    active: diWeekTotal[w].active-(diWeekTotal[w-1].active),
-                    confirmed: diWeekTotal[w].confirmed-(diWeekTotal[w-1].confirmed),
-                    deaths: diWeekTotal[w].deaths-(diWeekTotal[w-1].deaths),
-                    recovered: diWeekTotal[w].recovered-(diWeekTotal[w-1].recovered),
+                    active: diWeekTotal[w].active - (diWeekTotal[w - 1].active),
+                    confirmed: diWeekTotal[w].confirmed - (diWeekTotal[w - 1].confirmed),
+                    deaths: diWeekTotal[w].deaths - (diWeekTotal[w - 1].deaths),
+                    recovered: diWeekTotal[w].recovered - (diWeekTotal[w - 1].recovered),
                     date: dates
                 }
             }

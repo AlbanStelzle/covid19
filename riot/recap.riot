@@ -8,33 +8,32 @@
     </style>
     <div class="container">
 
-    <h4>Info covid : {state.date} </h4>
-            <div class="row">
-                <div class="col">
-                    <h5>Total</h5>
-                    <ul>
-                        <li class="text-primary fs-6">Cas : {state.globalstat[0].totalconfirmed}</li>
-                        <li class="text-danger fs-6">Morts : {state.globalstat[0].totaldeaths}</li>
-                        <li class="text-success fs-6">Guéris : {state.globalstat[0].totalrecovered}</li>
-                    </ul>
-                </div>
-
-                <div class="col end-0">
-                    <h5>Aujourd'hui</h5>
-                    <ul>
-                        <li class="text-primary fs-6">Cas : {state.globalstat[0].newconfirmed}</li>
-                        <li class="text-danger fs-6">Morts : {state.globalstat[0].newdeaths}</li>
-                        <li class="text-success fs-6">Guéris : {state.globalstat[0].newrecovered}</li>
-                    </ul>
-                </div>
+        <h4>Info covid : {state.date} </h4>
+        <div class="row">
+            <div class="col">
+                <h5>Total</h5>
+                <ul>
+                    <li class="text-primary fs-6">Cas : {state.globalstat[0].totalconfirmed}</li>
+                    <li class="text-danger fs-6">Morts : {state.globalstat[0].totaldeaths}</li>
+                    <li class="text-success fs-6">Guéris : {state.globalstat[0].totalrecovered}</li>
+                </ul>
             </div>
+
+            <div class="col end-0">
+                <h5>Aujourd'hui</h5>
+                <ul>
+                    <li class="text-primary fs-6">Cas : {state.globalstat[0].newconfirmed}</li>
+                    <li class="text-danger fs-6">Morts : {state.globalstat[0].newdeaths}</li>
+                    <li class="text-success fs-6">Guéris : {state.globalstat[0].newrecovered}</li>
+                </ul>
+            </div>
+        </div>
     </div>
     <script>
         export default {
             onBeforeMount() {
-                this.state =selectSum() ;
-                this.state.date = this.state.globalstat[0].date.slice(0,10)
-                console.log(this.state)
+                this.state = selectSum();
+                this.state.date = this.state.globalstat[0].date.slice(0, 10)
             }
         }
 

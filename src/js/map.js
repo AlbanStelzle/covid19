@@ -3,7 +3,7 @@ am4core.useTheme(am4themes_animated);
 am4core.useTheme(am4themes_dark);
 // Themes end
 
-am4core.ready(function() {
+am4core.ready(function () {
 
     var populations = {
         "AD": "84000",
@@ -261,7 +261,6 @@ am4core.ready(function() {
     }
 
 
-
     var numberFormatter = new am4core.NumberFormatter();
 
     var backgroundColor = am4core.color("#1e2128");
@@ -271,7 +270,7 @@ am4core.ready(function() {
     var deathsColor = am4core.color("#1c5fe5");
 
     // for an easier access by key
-    var colors = { active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor };
+    var colors = {active: activeColor, confirmed: confirmedColor, recovered: recoveredColor, deaths: deathsColor};
 
     var countryColor = am4core.color("#3b3b3b");
     var countryStrokeColor = am4core.color("#000000");
@@ -347,8 +346,8 @@ am4core.ready(function() {
     }
 
 
-    var max = { confirmed: 0, recovered: 0, deaths: 0 };
-    var maxPC = { confirmed: 0, recovered: 0, deaths: 0, active: 0 };
+    var max = {confirmed: 0, recovered: 0, deaths: 0};
+    var maxPC = {confirmed: 0, recovered: 0, deaths: 0, active: 0};
 
     // the last day will have most
     for (var i = 0; i < mapData.length; i++) {
@@ -392,7 +391,7 @@ am4core.ready(function() {
     mapChart.zoomControl.align = "right";
     mapChart.zoomControl.marginRight = 15;
     mapChart.zoomControl.valign = "middle";
-    mapChart.homeGeoPoint = { longitude: 0, latitude: -2 };
+    mapChart.homeGeoPoint = {longitude: 0, latitude: -2};
 
     // by default minus button zooms out by one step, but we modify the behavior so when user clicks on minus, the map would fully zoom-out and show world data
     mapChart.zoomControl.minusButton.events.on("hit", showWorld);
@@ -454,7 +453,6 @@ am4core.ready(function() {
     })
 
 
-
     // you can have pacific - centered map if you set this to -154.8
     mapChart.deltaLongitude = -8;
 
@@ -495,7 +493,7 @@ am4core.ready(function() {
     imageTemplate.events.on("hit", handleImageHit);
 
     // this is needed for the tooltip to point to the top of the circle instead of the middle
-    imageTemplate.adapter.add("tooltipY", function(tooltipY, target) {
+    imageTemplate.adapter.add("tooltipY", function (tooltipY, target) {
         return -target.children.getIndex(0).radius;
     })
 
@@ -523,39 +521,36 @@ am4core.ready(function() {
     })
 
     // when data items validated, hide 0 value bubbles (because min size is set)
-    bubbleSeries.events.on("dataitemsvalidated", function() {
+    bubbleSeries.events.on("dataitemsvalidated", function () {
         bubbleSeries.dataItems.each((dataItem) => {
             var mapImage = dataItem.mapImage;
             var circle = mapImage.children.getIndex(0);
             if (mapImage.dataItem.value == 0) {
                 circle.hide(0);
-            }
-            else if (circle.isHidden || circle.isHiding) {
+            } else if (circle.isHidden || circle.isHiding) {
                 circle.show();
             }
         })
     })
 
     // this places bubbles at the visual center of a country
-    imageTemplate.adapter.add("latitude", function(latitude, target) {
+    imageTemplate.adapter.add("latitude", function (latitude, target) {
         var polygon = polygonSeries.getPolygonById(target.dataItem.id);
         if (polygon) {
             target.disabled = false;
             return polygon.visualLatitude;
-        }
-        else {
+        } else {
             target.disabled = true;
         }
         return latitude;
     })
 
-    imageTemplate.adapter.add("longitude", function(longitude, target) {
+    imageTemplate.adapter.add("longitude", function (longitude, target) {
         var polygon = polygonSeries.getPolygonById(target.dataItem.id);
         if (polygon) {
             target.disabled = false;
             return polygon.visualLongitude;
-        }
-        else {
+        } else {
             target.disabled = true;
         }
         return longitude;
@@ -585,7 +580,7 @@ am4core.ready(function() {
     mapGlobeSwitch.verticalCenter = "top";
 
 
-    mapGlobeSwitch.events.on("toggled", function() {
+    mapGlobeSwitch.events.on("toggled", function () {
         if (mapGlobeSwitch.isActive) {
             mapChart.projection = new am4maps.projections.Orthographic;
             mapChart.backgroundSeries.show();
@@ -615,7 +610,7 @@ am4core.ready(function() {
     absolutePerCapitaSwitch.verticalCenter = "top";
 
 
-    absolutePerCapitaSwitch.events.on("toggled", function() {
+    absolutePerCapitaSwitch.events.on("toggled", function () {
         if (absolutePerCapitaSwitch.isActive) {
             bubbleSeries.hide(0);
             perCapita = true;
@@ -643,7 +638,7 @@ am4core.ready(function() {
             sizeLabel.show();
             filterLabel.show();
         }
-        polygonSeries.mapPolygons.each(function(mapPolygon) {
+        polygonSeries.mapPolygons.each(function (mapPolygon) {
             mapPolygon.fill = mapPolygon.fill;
             mapPolygon.defaultState.properties.fill = undefined;
         })
@@ -707,7 +702,7 @@ am4core.ready(function() {
 
 
     // what to do when slider is dragged
-    slider.events.on("rangechanged", function(event) {
+    slider.events.on("rangechanged", function (event) {
         var index = Math.round((covid_world_timeline.length - 1) * slider.start);
         updateMapData(getSlideData(index).list);
         updateTotals(index);
@@ -724,7 +719,7 @@ am4core.ready(function() {
     var playButton = sliderContainer.createChild(am4core.PlayButton);
     playButton.valign = "middle";
     // play button behavior
-    playButton.events.on("toggled", function(event) {
+    playButton.events.on("toggled", function (event) {
         if (event.target.isActive) {
             play();
         } else {
@@ -748,7 +743,7 @@ am4core.ready(function() {
     sizeSlider.verticalCenter = "middle";
     sizeSlider.opacity = 0.7;
     sizeSlider.background.fill = am4core.color("#ffffff");
-    sizeSlider.adapter.add("y", function(y, target) {
+    sizeSlider.adapter.add("y", function (y, target) {
         return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.25;
     })
 
@@ -761,10 +756,10 @@ am4core.ready(function() {
     sizeSlider.horizontalCenter = "middle";
 
 
-    sizeSlider.events.on("rangechanged", function() {
+    sizeSlider.events.on("rangechanged", function () {
         sizeSlider.startGrip.scale = 0.75 + sizeSlider.start;
         bubbleSeries.heatRules.getIndex(0).max = 30 + sizeSlider.start * 100;
-        circle.clones.each(function(clone) {
+        circle.clones.each(function (clone) {
             clone.radius = clone.radius;
         })
     })
@@ -779,13 +774,13 @@ am4core.ready(function() {
     sizeLabel.horizontalCenter = "middle";
     sizeLabel.align = "left"
     sizeLabel.paddingBottom = 40;
-    sizeLabel.tooltip.setBounds({ x: 0, y: 0, width: 200000, height: 200000 })
+    sizeLabel.tooltip.setBounds({x: 0, y: 0, width: 200000, height: 200000})
     sizeLabel.tooltip.label.wrap = true;
     sizeLabel.tooltip.label.maxWidth = 300;
     sizeLabel.tooltipText = "Some countries have so many cases that bubbles for countries with smaller values often look the same even if there is a significant difference between them. This slider can be used to increase maximum size of a bubble so that when you zoom in to a region with relatively small values you could compare them anyway."
     sizeLabel.fill = am4core.color("#ffffff");
 
-    sizeLabel.adapter.add("y", function(y, target) {
+    sizeLabel.adapter.add("y", function (y, target) {
         return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.25;
     })
 
@@ -801,7 +796,7 @@ am4core.ready(function() {
     filterSlider.verticalCenter = "middle";
     filterSlider.opacity = 0.7;
     filterSlider.background.fill = am4core.color("#ffffff");
-    filterSlider.adapter.add("y", function(y, target) {
+    filterSlider.adapter.add("y", function (y, target) {
         return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.7;
     })
 
@@ -815,15 +810,14 @@ am4core.ready(function() {
     filterSlider.start = 1;
 
 
-    filterSlider.events.on("rangechanged", function() {
+    filterSlider.events.on("rangechanged", function () {
         var maxValue = max[currentType] * filterSlider.start + 1;
         if (!isNaN(maxValue) && bubbleSeries.inited) {
             bubbleSeries.heatRules.getIndex(0).maxValue = maxValue;
-            circle.clones.each(function(clone) {
+            circle.clones.each(function (clone) {
                 if (clone.dataItem.value > maxValue) {
                     clone.dataItem.hide();
-                }
-                else {
+                } else {
                     clone.dataItem.show();
                 }
                 clone.radius = clone.radius;
@@ -847,16 +841,15 @@ am4core.ready(function() {
     filterLabel.tooltipText = "This filter allows to remove countries with many cases from the map so that it would be possible to compare countries with smaller number of cases."
     filterLabel.fill = am4core.color("#ffffff");
 
-    filterLabel.adapter.add("y", function(y, target) {
+    filterLabel.adapter.add("y", function (y, target) {
         return container.pixelHeight * (1 - buttonsAndChartContainer.percentHeight / 100) * 0.7;
     })
-
 
 
     // play behavior
     function play() {
         if (!sliderAnimation) {
-            sliderAnimation = slider.animate({ property: "start", to: 1, from: 0 }, 50000, am4core.ease.linear).pause();
+            sliderAnimation = slider.animate({property: "start", to: 1, from: 0}, 50000, am4core.ease.linear).pause();
             sliderAnimation.events.on("animationended", () => {
                 playButton.isActive = false;
             })
@@ -925,14 +918,14 @@ am4core.ready(function() {
     valueAxis.renderer.labels.template.verticalCenter = "bottom";
     valueAxis.renderer.labels.template.fill = am4core.color("#ffffff");
     valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
-    valueAxis.adapter.add("max", function(max, target) {
+    valueAxis.adapter.add("max", function (max, target) {
         if (max < 5) {
             max = 5
         }
         return max;
     })
 
-    valueAxis.adapter.add("min", function(min, target) {
+    valueAxis.adapter.add("min", function (min, target) {
         if (!seriesTypeSwitch.isActive) {
             if (min < 0) {
                 min = 0;
@@ -963,11 +956,11 @@ am4core.ready(function() {
     //lineChart.legend.fontSize = "10px";
     lineChart.legend.itemContainers.template.valign = "middle";
     var legendDown = false;
-    lineChart.legend.itemContainers.template.events.on("down", function() {
+    lineChart.legend.itemContainers.template.events.on("down", function () {
         legendDown = true;
     })
-    lineChart.legend.itemContainers.template.events.on("up", function() {
-        setTimeout(function() {
+    lineChart.legend.itemContainers.template.events.on("up", function () {
+        setTimeout(function () {
             legendDown = false;
         }, 100)
     })
@@ -979,16 +972,16 @@ am4core.ready(function() {
     seriesTypeSwitch.leftLabel.fill = am4core.color("#ffffff");
     seriesTypeSwitch.rightLabel.fill = am4core.color("#ffffff");
 
-    seriesTypeSwitch.events.on("down", function() {
+    seriesTypeSwitch.events.on("down", function () {
         legendDown = true;
     })
-    seriesTypeSwitch.events.on("up", function() {
-        setTimeout(function() {
+    seriesTypeSwitch.events.on("up", function () {
+        setTimeout(function () {
             legendDown = false;
         }, 100)
     })
 
-    seriesTypeSwitch.events.on("toggled", function() {
+    seriesTypeSwitch.events.on("toggled", function () {
         if (seriesTypeSwitch.isActive) {
             if (!columnSeries) {
                 createColumnSeries();
@@ -1004,8 +997,7 @@ am4core.ready(function() {
             }
 
             columnSeries[currentType].show();
-        }
-        else {
+        } else {
             for (var key in columnSeries) {
                 columnSeries[key].hiddenInLegend = true;
                 columnSeries[key].hide();
@@ -1022,12 +1014,11 @@ am4core.ready(function() {
     })
 
     function updateColumnsFill() {
-        columnSeries.active.columns.each(function(column) {
+        columnSeries.active.columns.each(function (column) {
             if (column.dataItem.values.valueY.previousChange < 0) {
                 column.fillOpacity = 0;
                 column.strokeOpacity = 0.6;
-            }
-            else {
+            } else {
                 column.fillOpacity = 0.6;
                 column.strokeOpacity = 0;
             }
@@ -1045,7 +1036,8 @@ am4core.ready(function() {
     var recoveredSeries = addSeries("recovered", recoveredColor);
     var deathsSeries = addSeries("deaths", deathsColor);
 
-    var series = { active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries };
+    var series = {active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries};
+
     // add series
     function addSeries(name, color) {
         var series = lineChart.series.push(new am4charts.LineSeries())
@@ -1091,14 +1083,14 @@ am4core.ready(function() {
     }
 
 
-    var series = { active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries };
+    var series = {active: activeSeries, confirmed: confirmedSeries, recovered: recoveredSeries, deaths: deathsSeries};
 
     var columnSeries;
 
     function createColumnSeries() {
         columnSeries = {}
         columnSeries.active = addColumnSeries("active", activeColor);
-        columnSeries.active.events.on("validated", function() {
+        columnSeries.active.events.on("validated", function () {
             updateColumnsFill();
         })
 
@@ -1137,7 +1129,7 @@ am4core.ready(function() {
     }
 
 
-    lineChart.plotContainer.events.on("up", function() {
+    lineChart.plotContainer.events.on("up", function () {
         if (!legendDown) {
             slider.start = lineChart.cursor.xPosition * ((dateAxis.max - dateAxis.min) / (lastDate.getTime() - dateAxis.min));
         }
@@ -1162,7 +1154,7 @@ am4core.ready(function() {
     var recoveredButton = addButton("recovered", recoveredColor);
     var deathsButton = addButton("deaths", deathsColor);
 
-    var buttons = { active: activeButton, confirmed: confirmedButton, recovered: recoveredButton, deaths: deathsButton };
+    var buttons = {active: activeButton, confirmed: confirmedButton, recovered: recoveredButton, deaths: deathsButton};
 
     // add button
     function addButton(name, color) {
@@ -1231,11 +1223,11 @@ am4core.ready(function() {
         bubbleSeries.dataFields.value = name;
         polygonSeries.dataFields.value = name + "PC";
 
-        bubbleSeries.dataItems.each(function(dataItem) {
+        bubbleSeries.dataItems.each(function (dataItem) {
             dataItem.setValue("value", dataItem.dataContext[currentType]);
         })
 
-        polygonSeries.dataItems.each(function(dataItem) {
+        polygonSeries.dataItems.each(function (dataItem) {
             dataItem.setValue("value", dataItem.dataContext[currentType + "PC"]);
             dataItem.mapPolygon.defaultState.properties.fill = undefined;
         })
@@ -1262,8 +1254,7 @@ am4core.ready(function() {
                     columnSeries[key].hide();
                 }
             }
-        }
-        else {
+        } else {
             var currentSeries = series[name];
             currentSeries.show();
             // hide other series
@@ -1301,7 +1292,7 @@ am4core.ready(function() {
         currentCountry = mapPolygon.dataItem.dataContext.name;
 
         // make others inactive
-        polygonSeries.mapPolygons.each(function(polygon) {
+        polygonSeries.mapPolygons.each(function (polygon) {
             polygon.isActive = false;
         })
 
@@ -1310,7 +1301,7 @@ am4core.ready(function() {
             clearTimeout(countryDataTimeout);
         }
         // we delay change of data for better performance (so that data is not changed whil zooming)
-        countryDataTimeout = setTimeout(function() {
+        countryDataTimeout = setTimeout(function () {
             setCountryData(countryIndex);
         }, 1000); // you can adjust number, 1000 is one second
 
@@ -1324,8 +1315,7 @@ am4core.ready(function() {
             if (mapChart.zoomLevel != 1) {
                 mapChart.goHome();
                 rotateAndZoom(mapPolygon);
-            }
-            else {
+            } else {
                 rotateAndZoom(mapPolygon);
             }
         }
@@ -1350,8 +1340,7 @@ am4core.ready(function() {
                 dataContext.active = countryData.confirmed - countryData.recovered - countryData.deaths;
                 valueAxis.min = undefined;
                 valueAxis.max = undefined;
-            }
-            else {
+            } else {
                 dataContext.recovered = 0;
                 dataContext.confirmed = 0;
                 dataContext.deaths = 0;
@@ -1372,8 +1361,8 @@ am4core.ready(function() {
         position = dateAxis.toGlobalPosition(position);
         var x = dateAxis.positionToCoordinate(position);
 
-        lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
-        lineChart.series.each(function(series) {
+        lineChart.cursor.triggerMove({x: x, y: 0}, "soft", true);
+        lineChart.series.each(function (series) {
             if (!series.isHidden) {
                 series.tooltip.disabled = false;
                 series.showTooltipAtDataItem(series.tooltipDataItem);
@@ -1396,6 +1385,7 @@ am4core.ready(function() {
             }
         }
     }
+
     // what happens when a country is rolled-out
     function rollOutCountry(mapPolygon) {
         var image = bubbleSeries.getImageById(mapPolygon.dataItem.id)
@@ -1409,8 +1399,11 @@ am4core.ready(function() {
     // rotate and zoom
     function rotateAndZoom(mapPolygon) {
         polygonSeries.hideTooltip();
-        var animation = mapChart.animate([{ property: "deltaLongitude", to: -mapPolygon.visualLongitude }, { property: "deltaLatitude", to: -mapPolygon.visualLatitude }], 1000)
-        animation.events.on("animationended", function() {
+        var animation = mapChart.animate([{
+            property: "deltaLongitude",
+            to: -mapPolygon.visualLongitude
+        }, {property: "deltaLatitude", to: -mapPolygon.visualLatitude}], 1000)
+        animation.events.on("animationended", function () {
             mapChart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
         })
     }
@@ -1434,7 +1427,7 @@ am4core.ready(function() {
         }
 
         // make all inactive
-        polygonSeries.mapPolygons.each(function(polygon) {
+        polygonSeries.mapPolygons.each(function (polygon) {
             polygon.isActive = false;
         })
 
@@ -1478,7 +1471,7 @@ am4core.ready(function() {
             var x = dateAxis.positionToCoordinate(position);
 
             if (lineChart.cursor) {
-                lineChart.cursor.triggerMove({ x: x, y: 0 }, "soft", true);
+                lineChart.cursor.triggerMove({x: x, y: 0}, "soft", true);
             }
             for (var key in buttons) {
                 var count = Number(lineChart.data[index][key])
@@ -1493,14 +1486,14 @@ am4core.ready(function() {
     // update map data
     function updateMapData(data) {
         //modifying instead of setting new data for a nice animation
-        bubbleSeries.dataItems.each(function(dataItem) {
+        bubbleSeries.dataItems.each(function (dataItem) {
             dataItem.dataContext.confirmed = 0;
             dataItem.dataContext.deaths = 0;
             dataItem.dataContext.recovered = 0;
             dataItem.dataContext.active = 0;
         })
 
-        maxPC = { active: 0, confirmed: 0, deaths: 0, recovered: 0 };
+        maxPC = {active: 0, confirmed: 0, deaths: 0, recovered: 0};
 
         for (var i = 0; i < data.length; i++) {
             var di = data[i];
@@ -1578,16 +1571,16 @@ am4core.ready(function() {
     }
 
     function resetHover() {
-        polygonSeries.mapPolygons.each(function(polygon) {
+        polygonSeries.mapPolygons.each(function (polygon) {
             polygon.isHover = false;
         })
 
-        bubbleSeries.mapImages.each(function(image) {
+        bubbleSeries.mapImages.each(function (image) {
             image.isHover = false;
         })
     }
 
-    container.events.on("layoutvalidated", function() {
+    container.events.on("layoutvalidated", function () {
         dateAxis.tooltip.hide();
         lineChart.cursor.hide();
         updateTotals(currentIndex);
@@ -1613,9 +1606,9 @@ am4core.ready(function() {
         table.find(".area").remove();
         for (var i = 0; i < list.length; i++) {
             var area = list[i];
-            var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function() {
+            var tr = $("<tr>").addClass("area").data("areaid", area.id).appendTo(table).on("click", function () {
                 selectCountry(polygonSeries.getPolygonById($(this).data("areaid")));
-            }).hover(function() {
+            }).hover(function () {
                 rollOverCountry(polygonSeries.getPolygonById($(this).data("areaid")));
             });
             $("<td>").appendTo(tr).data("areaid", area.id).html(area.name);
@@ -1629,7 +1622,8 @@ am4core.ready(function() {
             "select": true
         }).column("1")
             .order("desc")
-            .draw();;
+            .draw();
+
     }
 
 
