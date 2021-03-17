@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="13680a67-8fb3-4be0-b5b0-2463aa85d6a3" name="IUT" url="http://gatekeeper.iut-fbleau.fr">
+        <fileTransfer rootFolder="/export/home/an19/stelzle" accessType="SFTP" host="gatekeeper.iut-fbleau.fr" port="22" sshConfigId="37260b55-0640-4553-814c-5ffb6d91015e" sshConfig="stelzle@gatekeeper.iut-fbleau.fr:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

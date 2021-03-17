@@ -1,0 +1,50 @@
+<app>
+    <router base={base}>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Covided</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#/">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#/info">Informations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Carte du monde (WIP)</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <route path="(#|)">
+            <accueil/>
+        </route>
+
+        <route path="#/pays/(.*)">
+            <graph/>
+        </route>
+        <route path="#/info">
+            <recap/>
+            <tab/>
+        </route>
+        <route path="#/map">
+            <map-covid/>
+        </route>
+    </router>
+    <script>
+        const loc = window.location
+        export default {
+            base: `${loc.protocol}//${loc.host}${loc.pathname ? loc.pathname : ''}`,
+            onBeforeMount() {
+
+                createdb();
+            }
+        }
+    </script>
+</app>

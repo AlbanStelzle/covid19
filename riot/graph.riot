@@ -1,0 +1,395 @@
+<graph>
+    <style>
+        canvas{
+            width: 100%;
+            height: 600px;
+            display:none
+        }
+
+        #graph1,#graphD1{
+            display: block;
+        }
+    </style>
+    <div class="container mb-5">
+        <h1 class="display-4" style="text-align: center" >Graph Total</h1>
+        <div style="text-align: center" class="mb-3 ">
+
+            <button type="button" class="btn btn-primary ms-2" style="text-align: center" onclick={changeGraph("graph1","graph-total")}> Cas</button>
+    <button type="button" class="btn btn-danger ms-2" style="text-align: center" onclick={changeGraph("graph2","graph-total")}> Décès</button>
+    <button type="button" class="btn btn-success ms-2" style="text-align: center" onclick={changeGraph("graph3","graph-total")}> Guéris</button>
+        </div>
+    <canvas id="graph1" class = "graph-total" style="border: 1px solid black; "></canvas>
+    <canvas id="graph2" class = "graph-total" style="border: 1px solid black; "></canvas>
+    <canvas id="graph3" class = "graph-total" style="border: 1px solid black; "></canvas>
+
+    <h1 class="display-4" style="text-align: center">Graph différentiel</h1>
+        <div style="text-align: center" class="mb-3">
+
+        <button type="button" class="btn btn-primary ms-2" style="text-align: center" onclick={changeGraph("graphD1","graph-diff")}> Cas</button>
+    <button type="button" class="btn btn-danger ms-2" style="text-align: center" onclick={changeGraph("graphD2","graph-diff")}> Décès</button>
+    <button type="button" class="btn btn-success ms-2" style="text-align: center" onclick={changeGraph("graphD3","graph-diff")}> Guéris</button>
+    </div>
+    <canvas id="graphD1" class = "graph-diff" style="border: 1px solid black; "></canvas>
+    <canvas id="graphD2" class = "graph-diff" style="border: 1px solid black; "></canvas>
+    <canvas id="graphD3" class = "graph-diff" style="border: 1px solid black; "></canvas>
+    </div>
+    <script>
+
+        export default {
+
+            onMounted() {
+
+                let countrycode = location.href.match(/([^\/]*)\/*$/)[1];
+
+                let di = selectcountries(getCountryNameFromCountryCode(countrycode));
+                let diWeek = {};
+                let diWeekDiff = {};
+
+                for (let i = 0, w = 0, z = 0; i < di.length; i += 7, w++) {
+                    let active = 0
+                    let confirmed = 0
+                    let recovered = 0
+                    let deaths = 0
+                    let dates = null;
+                    if ((di.length - i) < 7) {
+                        for (let y = 0; y < 7; y++, z++) {
+
+                            active += di[z - (di.length - i)].active
+                            confirmed += di[z - (di.length - i)].confirmed
+                            recovered += di[z - (di.length - i)].recovered
+                            deaths += di[z - (di.length - i)].deaths
+                            dates = di[z - (di.length - i)].date
+                        }
+                        active/=(di.length - i);
+                        confirmed/=(di.length - i);
+                        recovered/=(di.length - i)
+                        deaths/=(di.length - i);
+                    } else {
+                        for (let y = 0; y < 7; y++, z++) {
+
+                            active += di[z].active
+                            confirmed += di[z].confirmed
+                            recovered += di[z].recovered
+                            deaths += di[z].deaths
+                            dates = di[z].date
+                        }
+                        active/=7;
+                        confirmed/=7;
+                        recovered/=7
+                        deaths/=7;
+
+                    }
+                    diWeek[w] = {
+                        active: active ,
+                        confirmed: confirmed ,
+                        deaths: deaths ,
+                        recovered: recovered ,
+                        date: dates
+                    }
+                }
+                for (let w=0; w < Object.keys(diWeek).length; w++) {
+
+                    if(w==0) {
+                        diWeekDiff[w] = diWeek[w]
+
+                    }else{
+                        diWeekDiff[w] = {
+                            active: diWeek[w].active-(diWeek[w-1].active),
+                            confirmed: diWeek[w].confirmed-(diWeek[w-1].confirmed),
+                            deaths: diWeek[w].deaths-(diWeek[w-1].deaths),
+                            recovered: diWeek[w].recovered-(diWeek[w-1].recovered),
+                            date: diWeek[w].date
+                        }
+                    }
+                }
+                function LineGraph(canvasId) {
+                    /**
+                     * Dessiner un graphique sur un Canvas HTML5
+                     * @author: http://www.fobec.com/tuto/1153/dessiner-graph-sur-canvas-html5.html
+                     */
+                        //Interne - ne pas modifier ces valeurs
+                    let canvas_ctx = null;
+                    let canvas_obj = null;
+                    let dataset = {serie: []};
+                    let xLabelStep;
+                    let yMax = 0;
+                    let xMax = 0;
+
+                    //const: marge gauche et droite
+                    let marginX = 100;
+                    //const: marge en haut et en bas
+                    let marginY = 50;
+                    //nombre de valeur a afficher sur axe X
+                    let yStep = 10;
+
+
+                    //Constructor
+                    canvas_obj = document.getElementById(canvasId);
+                    canvas_ctx = canvas_obj.getContext('2d');
+                    //Dessiner un fond blanc
+                    canvas_ctx.beginPath();
+                    canvas_obj.width = 1920;
+                    canvas_obj.height = 600;
+
+                    canvas_ctx.fillStyle = '#fff';
+
+                    canvas_ctx.fillRect(0, 0, canvas_obj.width, canvas_obj.height);
+                    canvas_ctx.stroke();
+
+                    /**
+                     * Dessiner les axes verticaux
+                     * @returns {undefined}
+                     */
+                    this.drawAxis = function () {
+                        canvas_ctx.lineWidth = 2;
+                        canvas_ctx.strokeStyle = '#333';
+                        canvas_ctx.fillStyle = '#333';
+                        canvas_ctx.beginPath();
+                        canvas_ctx.textAlign = "left"
+                        canvas_ctx.font = "14px arial"
+                        //label de l'axe Y
+                        let yVal;
+                        for (let i = 0; i <= yStep; i++) {
+                            yVal = (yMax / yStep) * i;
+                            if(i== 0 ){
+                                canvas_ctx.textAlign = "right"
+
+                            }else{
+                                canvas_ctx.textAlign = "left"
+
+                            }
+                            canvas_ctx.fillText(Math.round(yVal).toLocaleString(), 20, yValuetoGraph(yVal));
+                        }
+                        canvas_ctx.stroke();
+                        //Barre verticales
+                        canvas_ctx.beginPath();
+                        canvas_ctx.strokeStyle = '#666';
+                        canvas_ctx.lineWidth = .5;
+                        for (let i = 0; i <= yStep; i++) {
+                            yVal = (yMax / yStep) * i;
+                            canvas_ctx.moveTo(marginX, yValuetoGraph(yVal) + 2);
+                            canvas_ctx.lineTo(canvas_obj.width - marginX, yValuetoGraph(yVal) + 2);
+                        }
+
+                        canvas_ctx.stroke();
+                    }
+
+
+                    this.setColor = function (c) {
+                        canvas_ctx.strokeStyle = c;
+
+                    }
+                    /**
+                     * Ajouter une valeur X,Y à la serie
+                     * @param {string} x
+                     * @param {float} y
+                     */
+                    this.addPoint = function (x, y) {
+                        dataset.serie.push({X: x, Y: y});
+
+                    }
+                    this.checkAndChangeyMax = function (y) {
+                        if (y > yMax ) {
+                            yMax = y;
+                        }
+                    }
+                    this.setyMax = function (y) {
+                            yMax = y;
+                        }
+
+                        this.getyMax = function () {
+                        return yMax;
+                    }
+                    /**
+                     * Dessiner la courbe
+                     */
+                    this.drawLine = function () {
+                        canvas_ctx.beginPath();
+
+                        canvas_ctx.lineWidth = 3;
+                        canvas_ctx.moveTo(xValuetoGraph(0), yValuetoGraph(dataset.serie[0].Y));
+                        //line
+                        for (let i = 1; i < dataset.serie.length; i++) {
+                            canvas_ctx.lineTo(xValuetoGraph(i), yValuetoGraph(dataset.serie[i].Y));
+                        }
+                        canvas_ctx.stroke();
+                        //point
+                        canvas_ctx.fillStyle = '#333';
+                       /* for (let i = 0; i < dataset.serie.length; i++) {
+                            canvas_ctx.beginPath();
+                             canvas_ctx.arc(xValuetoGraph(i), yValuetoGraph(dataset.serie[i].Y), 4, 0, Math.PI * 2, true);
+                             canvas_ctx.fill();
+                        }*/
+
+
+                    }
+                    this.drawXAxis = function () {
+                        //label x
+                        canvas_ctx.beginPath();
+                        let ilabelstep = xLabelStep;
+                        canvas_ctx.save();
+                        canvas_ctx.textAlign="center";
+                        canvas_ctx.textBaseline="middle";
+
+                        canvas_ctx.rotate(3*Math.PI/2);
+                        canvas_ctx.fillText("Hello World!",10,-100);
+                        for (let i = 0; i < dataset.serie.length; i++) {
+                            //Bidouillage pour eviter la superposition de label sur l'axe X
+
+                            canvas_ctx.fillText(dataset.serie[i].X,-(yValuetoGraph(0) + (marginY / 2)), (xValuetoGraph(i) + (marginX / 2)-50));
+                                ilabelstep++;
+
+                        }
+
+
+                        canvas_ctx.stroke();
+                        canvas_ctx.restore();
+
+
+                        let xVal
+                        for (let i = 0; i < dataset.serie.length; i++) {
+                            xVal = i;
+                            canvas_ctx.moveTo(xValuetoGraph(xVal) ,marginY-20);
+                            canvas_ctx.lineTo(xValuetoGraph(xVal) ,canvas_obj.height - marginY );
+                        }
+
+                        canvas_ctx.stroke();
+                    }
+
+                    /**
+                     * Regle par 3 pour X
+                     * @param {type} xIdx
+                     */
+                    function xValuetoGraph(xIdx) {
+                        let serielen = dataset.serie.length;
+                        let xArea = canvas_obj.width - (marginX * 2);
+                        let xPos = ((xArea / serielen) * xIdx) + marginX;
+                        return xPos;
+                    }
+
+                    /**
+                     * Regle par 3 pour Y
+                     * @param {type} xIdx
+                     */
+                    function yValuetoGraph(yVal) {
+                        let yArea = canvas_obj.height - (marginY * 2);
+                        let yPos = canvas_obj.height - marginY - ((yVal * yArea) / yMax);
+                        return yPos;
+                    }
+
+                    /**
+                     * Définir le nombre de label sur l'axe X
+                     * @returns {undefined}
+                     */
+                   /* function calcXStep() {
+                        let text;
+                        let xArea = canvas_obj.width - (marginX * 2);
+                        for (let i = 0; i < dataset.serie.length; i++) {
+                            text += ' ' + dataset.serie[i].X + ' ';
+                        }
+                        let metrics = canvas_ctx.measureText(text);
+                        let width = metrics.width;
+                        xLabelStep = Math.round(width / xArea);
+                    }*/
+
+
+                }
+
+                function graphTotal() {
+                    let graph1confirmed = new LineGraph("graph1");
+                    let graph1deaths = new LineGraph("graph2");
+                    let graph1recovered = new LineGraph("graph3");
+
+                    // graph total confirmed
+                    for (let i = 0; i < Object.keys(diWeek).length; i++) {
+                        graph1confirmed.addPoint((diWeek[i].date).slice(5,10), diWeek[i].confirmed);
+                        graph1confirmed.checkAndChangeyMax(diWeek[i].confirmed);
+                    }
+                    graph1confirmed.setColor("#0055ff");
+                    graph1confirmed.drawLine();
+                    graph1confirmed.drawAxis()
+                    graph1confirmed.drawXAxis();
+
+                    // graph total deaths
+                    for (let i = 0; i < Object.keys(diWeek).length; i++) {
+                        graph1deaths.addPoint((diWeek[i].date).slice(5,10), diWeek[i].deaths);
+                        //On remet à jour parce qu'il y a beaucoup moins de décès que de cas / recovered
+                        graph1deaths.checkAndChangeyMax(diWeek[i].deaths);
+                    }
+                    graph1deaths.setColor("#ff0000");
+                    graph1deaths.drawLine();
+                    graph1deaths.drawAxis()
+                    graph1deaths.drawXAxis();
+
+                    // graph total recovered
+                    for (let i = 0; i < Object.keys(diWeek).length; i++) {
+                        graph1recovered.addPoint((diWeek[i].date).slice(5,10), diWeek[i].recovered);
+                    }
+                    graph1recovered.setyMax(graph1confirmed.getyMax());
+                    graph1recovered.setColor("#00ff99");
+                    graph1recovered.drawLine();
+                    graph1recovered.drawAxis()
+                    graph1recovered.drawXAxis();
+                }
+                function graphDiff() {
+                    let graph1confirmed = new LineGraph("graphD1");
+                    let graph1deaths = new LineGraph("graphD2");
+                    let graph1recovered = new LineGraph("graphD3");
+
+
+                    // graph total confirmed
+                    for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
+                        graph1confirmed.addPoint((diWeekDiff[i].date).slice(5,10), diWeekDiff[i].confirmed);
+                        graph1confirmed.checkAndChangeyMax(diWeekDiff[i].confirmed);
+                    }
+                    graph1confirmed.setColor("#0055ff");
+                    graph1confirmed.drawLine();
+                    graph1confirmed.drawAxis()
+                    graph1confirmed.drawXAxis();
+
+                    // graph total deaths
+                    for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
+                        graph1deaths.addPoint((diWeekDiff[i].date).slice(5,10), diWeekDiff[i].deaths);
+                        graph1deaths.checkAndChangeyMax(diWeekDiff[i].deaths);
+                    }
+                    graph1deaths.setColor("#ff0000");
+                    graph1deaths.drawLine();
+                    graph1deaths.drawAxis()
+                    graph1deaths.drawXAxis();
+
+                    // graph total recovered
+                    for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
+                        graph1recovered.addPoint((diWeekDiff[i].date).slice(5,10), diWeekDiff[i].recovered);
+                        graph1recovered.checkAndChangeyMax(diWeekDiff[i].recovered);
+
+                    }
+                    graph1recovered.setColor("#00ff99");
+                    graph1recovered.drawLine();
+                    graph1recovered.drawAxis()
+                    graph1recovered.drawXAxis();
+                }
+
+                graphTotal();
+                graphDiff();
+
+            },
+
+            changeGraph(id, classname) {
+                return function(e) {
+                    console.log(document.getElementById(id).style)
+                    console.log(document.getElementsByClassName(classname))
+                    let classe = document.getElementsByClassName(classname);
+                    for(let i = 0; i < classe.length; i++){
+                        classe[i].style.display = "none";
+
+                    }
+                    document.getElementById(id).style.display = "block";
+                }
+
+            }
+        }
+
+
+    </script>
+
+</graph>

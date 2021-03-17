@@ -1,0 +1,48 @@
+<tab>
+    <div class="container">
+    <table id="tabCovid" class="table table-bordered ">
+        <thead>
+        <tr>
+            <th scope="col">Pays</th>
+            <th scope="col">Cas</th>
+            <th scope="col">Guéris</th>
+            <th scope="col">Morts</th>
+            <th scope="col">Cas total</th>
+            <th scope="col">Guéris total</th>
+            <th scope="col">Morts total</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        </tbody>
+    </table>
+    </div>
+    <script>
+        export default {
+            onMounted() {
+                let row = "";
+                let di = selectSum();
+                for (let index = 0; index < di.countries.length; index++) {
+                    row = ""
+                    let currentCountry = di.countries[index]
+                    row += "<tr>"
+                    row += "<th scope='1' onclick=\"location.href='./#/pays/" + currentCountry.countrycode + "';\" class='text-primary'>" + currentCountry.country + "</th>"
+                    row += "<td class='text-primary'>" + currentCountry.newconfirmed + "</td>"
+                    row += "<td class='text-success'>" + currentCountry.newrecovered + "</td>"
+                    row += "<td class='text-danger'>" + currentCountry.newdeaths + "</td>"
+                    row += "<td class='text-primary'>" + currentCountry.totalconfirmed + "</td>"
+                    row += "<td class='text-success'>" + currentCountry.totalrecovered + "</td>"
+                    row += "<td class='text-danger'>" + currentCountry.totaldeaths + "</td>"
+                    row += "</tr>"
+
+                    $('table').find('tbody').append( row );
+                }
+                $(document).ready(function () {
+                    $('#tabCovid').DataTable();
+                });
+            }
+
+        }
+    </script>
+</tab>
