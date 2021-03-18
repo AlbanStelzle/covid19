@@ -32,8 +32,8 @@
             <graph/>
         </route>
         <route path="#/info">
-            <recap/>
-            <tab/>
+            <recap data="{state.info}"/>
+            <tab data="{state.info}"/>
         </route>
         <route path="#/map">
             <map-covid/>
@@ -43,9 +43,13 @@
         const loc = window.location
         export default {
             base: `${loc.protocol}//${loc.host}${loc.pathname ? loc.pathname : ''}`,
-            onBeforeMount() {
-
+            onBeforeMount(props, state) {
                 createdb();
+                state.info = ({
+                    date: "",
+                    all: selectSum()
+                })
+                state.info.date = (state.info.all.globalstat[0].date);
             }
         }
     </script>

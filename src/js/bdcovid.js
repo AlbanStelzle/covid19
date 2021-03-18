@@ -102,20 +102,21 @@ selectSum = () => {
 
         $.ajax(settings).done(function (response) {
             let data = response;
-            db.deleteRows("countries");
-            db.deleteRows("globalstat");
-            data.Countries.forEach(element => {
-                db.insert("countries", {
-                    country: element.Country,
-                    countrycode: element.CountryCode,
-                    slug: element.Slug,
-                    newconfirmed: element.NewConfirmed,
-                    totalconfirmed: element.TotalConfirmed,
-                    newdeaths: element.NewDeaths,
-                    totaldeaths: element.TotalDeaths,
+            if (data !== undefined) {
+                db.deleteRows("countries");
+                db.deleteRows("globalstat");
+                data.Countries.forEach(element => {
+                    db.insert("countries", {
+                        country: element.Country,
+                        countrycode: element.CountryCode,
+                        slug: element.Slug,
+                        newconfirmed: element.NewConfirmed,
+                        totalconfirmed: element.TotalConfirmed,
+                        newdeaths: element.NewDeaths,
+                        totaldeaths: element.TotalDeaths,
                     newrecovered: element.NewRecovered,
                     totalrecovered: element.TotalRecovered,
-                    date: element.Date
+                        date: element.Date.slice(0, 10)
                 });
                 db.commit();
             });
@@ -127,12 +128,12 @@ selectSum = () => {
                 totaldeaths: data.Global.TotalDeaths,
                 newrecovered: data.Global.NewRecovered,
                 totalrecovered: data.Global.TotalRecovered,
-                date: data.Global.Date
+                date: data.Global.Date.slice(0, 10)
 
             });
             db.commit();
 
-
+            }
         })
         bool = false;
     }
@@ -187,6 +188,7 @@ getInfoCountries = (namecountry) => {
             $.ajax(settings).done(function (response) {
                 let data = response;
                 db.deleteRows("selectcountry");
+
                 data.forEach(element => {
                     db.insert("selectcountry", {
                         country: element.Country,

@@ -1,5 +1,16 @@
 <tab>
     <div class="container">
+
+        <input class="form-control" onkeyup={ change } placeholder="Rechercher" style="width:300px" type="search"
+               value={ state.keyword }>
+        <select class="form-select" onchange={ updateRows } style="width:100px">
+            <option selected>10</option>
+            <option>20</option>
+            <option>50</option>
+            <option>100</option>
+            <option>200</option>
+        </select>
+
         <table class="table table-bordered " id="tabCovid">
             <thead>
             <tr>
@@ -13,36 +24,135 @@
             </tr>
             </thead>
             <tbody>
-
+            <tr each={data in filtered.slice(state.min,state.max)}>
+                <th>
+                    <a href="#/pays/{data.countrycode}">{data.name}</a>
+                </th>
+                <td class='text-primary'>{data.newconfirmed.toLocaleString()}</td>
+                <td class='text-danger'>{data.newdeaths.toLocaleString()}</td>
+                <td class='text-success'>{data.newrecovered.toLocaleString()}</td>
+                <td class='text-primary'>{data.totalconfirmed.toLocaleString()}</td>
+                <td class='text-danger'>{data.totaldeaths.toLocaleString()}</td>
+                <td class='text-success'>{data.totalrecovered.toLocaleString()}</td>
+            </tr>
 
             </tbody>
         </table>
+        <nav aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <button class="btn btn-primary disabled" id="prec-bttn" onclick={ page } value="prec">Précédent
+                    </button>
+                </li>
+                <div each={(data, index) in Array(Math.round((Object.keys(this.state.countries).length)/this.state.maxshow))}>
+                    <button class="btn btn-outline-primary page-item" onclick={ page } value="{index}">{index+1}
+                    </button>
+
+                </div>
+                <button class="btn btn-primary" id="suiv-bttn" onclick={ page } value="suiv">Suivant</button>
+
+            </ul>
+        </nav>
+
     </div>
+
     <script>
+
         export default {
+            state: {
+                keyword: '',
+                countries: [],
+                max: 10,
+                maxshow: 10,
+                min: 0,
+                pgnb: 0,
+                previousbtn: ""
+            },
+
+            get filtered() {
+                return this.state.countries.filter((c) => !this.state.keyword || c.name.toLowerCase().indexOf(this.state.keyword.toLowerCase()) === 0)
+            },
+
             onMounted() {
-                let row = "";
-                let di = selectSum();
-                for (let index = 0; index < di.countries.length; index++) {
-                    row = ""
-                    let currentCountry = di.countries[index]
-                    row += "<tr>"
-                    row += "<th scope='1' onclick=\"location.href='./#/pays/" + currentCountry.countrycode + "';\" class='text-primary'>" + currentCountry.country + "</th>"
-                    row += "<td class='text-primary'>" + currentCountry.newconfirmed + "</td>"
-                    row += "<td class='text-success'>" + currentCountry.newrecovered + "</td>"
-                    row += "<td class='text-danger'>" + currentCountry.newdeaths + "</td>"
-                    row += "<td class='text-primary'>" + currentCountry.totalconfirmed + "</td>"
-                    row += "<td class='text-success'>" + currentCountry.totalrecovered + "</td>"
-                    row += "<td class='text-danger'>" + currentCountry.totaldeaths + "</td>"
-                    row += "</tr>"
+                const countries = Object.keys(this.props.data.all.countries)
+                    .map((key) => ({
+                        name: this.props.data.all.countries[key].country,
+                        countrycode: this.props.data.all.countries[key].countrycode,
+                        slug: this.props.data.all.countries[key].slug,
+                        newconfirmed: this.props.data.all.countries[key].newconfirmed,
+                        totalconfirmed: this.props.data.all.countries[key].totalconfirmed,
+                        newdeaths: this.props.data.all.countries[key].newdeaths,
+                        totaldeaths: this.props.data.all.countries[key].totaldeaths,
+                        newrecovered: this.props.data.all.countries[key].newrecovered,
+                        totalrecovered: this.props.data.all.countries[key].totalrecovered,
+                        date: this.props.data.all.countries[key].date
+                    }))
+                this.update({countries})
+            },
+            change(e) {
+                this.update({
+                    min: 0,
+                    keyword: e.target.value,
+                    max: this.state.maxshow
 
-                    $('table').find('tbody').append(row);
+                })
+            },
+            page(e) {
+                if (e.target.value == "prec") {
+                    if (this.state.pgnb != 0) {
+                        this.state.pgnb -= 1;
+                        this.state.min = this.state.pgnb * this.state.maxshow;
+                        this.state.max = this.state.min + this.state.maxshow;
+                    }
+
+                } else if (e.target.value == "suiv") {
+                    if (this.state.pgnb != Math.round((Object.keys(this.state.countries).length) / this.state.maxshow)) {
+                        this.state.pgnb++
+                        this.state.min = this.state.pgnb * this.state.maxshow;
+                        this.state.max = this.state.min + this.state.maxshow;
+                    }
+                } else {
+
+                    this.state.min = parseInt(e.target.value) * this.state.maxshow;
+                    this.state.max = this.state.min + this.state.maxshow;
+                    this.state.pgnb = parseInt(e.target.value)
                 }
-                $(document).ready(function () {
-                    $('#tabCovid').DataTable();
-                });
-            }
+                if (this.state.pgnb === 0) {
+                    document.getElementById("prec-bttn").classList.add("disabled");
+                } else {
+                    document.getElementById("prec-bttn").classList.remove("disabled");
 
+                }
+                if (this.state.pgnb === ((Object.keys(this.state.countries)).length / this.state.maxshow) - 1) {
+                    document.getElementById("suiv-bttn").classList.add("disabled");
+                } else {
+                    document.getElementById("suiv-bttn").classList.remove("disabled");
+
+                }
+
+
+                console.log("min : " + this.state.min)
+                console.log("max : " + this.state.max)
+                this.update();
+            },
+            updateRows(e) {
+                if (this.state.pgnb > 0) {
+                    this.state.max = this.state.min + parseInt(e.target.value);
+
+                    this.state.maxshow = parseInt(e.target.value);
+                } else {
+                    this.state.max = e.target.value;
+                    this.state.maxshow = parseInt(e.target.value);
+                }
+                if (this.state.max > (Object.keys(this.state.countries).length)) {
+                    this.state.min = this.state.min - this.state.maxshow;
+
+                }
+                console.log("min : " + this.state.min)
+                console.log("max : " + this.state.max)
+                this.update();
+            }
         }
     </script>
+
 </tab>

@@ -60,7 +60,6 @@
                 let di = selectcountries(getCountryNameFromCountryCode(countrycode));
                 let diWeek = {};
                 let diWeekDiff = {};
-
                 for (let i = 0, w = 0, z = 0; i < di.length; i += 7, w++) {
                     let active = 0
                     let confirmed = 0
@@ -68,7 +67,7 @@
                     let deaths = 0
                     let dates = null;
                     if ((di.length - i) < 7) {
-                        for (let y = 0; y < 7; y++, z++) {
+                        for (let y = 0; y < (di.length - i); y++, z++) {
 
                             active += di[z - (di.length - i)].active
                             confirmed += di[z - (di.length - i)].confirmed
