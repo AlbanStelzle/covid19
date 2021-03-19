@@ -6,7 +6,9 @@ createdb = () => {
         db.createTable("todate", ["utilisation", "date"]);
         db.createTable("selectcountry", ["country", "active", "confirmed", "deaths", "recovered", "date"]);
         db.commit();
-        console.log("BD crée")
+        selectSum() // Si la BD est créée pour la première fois, ajoute les données du sommaire
+
+        console.log("BD créée")
     } else {
         console.log("BD existe déjà")
     }
