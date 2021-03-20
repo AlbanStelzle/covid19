@@ -5,8 +5,8 @@ createdb = () => {
         db.createTable("globalstat", ["newconfirmed", "totalconfirmed", "newdeaths", "totaldeaths", "newrecovered", "totalrecovered", "date"]);
         db.createTable("todate", ["utilisation", "date"]);
         db.createTable("selectcountry", ["country", "active", "confirmed", "deaths", "recovered", "date"]);
+        db.insert("todate", {utilisation: 0, date: new Date()})
         db.commit();
-        selectSum() // Si la BD est créée pour la première fois, ajoute les données du sommaire
 
         console.log("BD créée")
     } else {
@@ -16,6 +16,9 @@ createdb = () => {
 
 useAPI = () => {
     const db = new localStorageDB("covid19", localStorage);
+    if (!(db.tableExists("todate"))) {
+        createdb()
+    }
     if (db.rowCount("todate") === 0) {
         db.insert("todate", {utilisation: 1, date: Date.now()});
     } else {
@@ -37,18 +40,23 @@ useAPI = () => {
 }
 checkAPI = () => {
     const db = new localStorageDB("covid19", localStorage);
+    if (!(db.tableExists("todate"))) {
+        createdb()
+    }
     let value = db.queryAll('todate')[0];
 
     if (value === undefined) {
         let t = useAPI();
-        checkAPI();
+        return checkAPI();
     } else {
         return value;
     }
-    return false;
 }
 resetAPI = () => {
     const db = new localStorageDB("covid19", localStorage);
+    if (!(db.tableExists("todate"))) {
+        createdb()
+    }
     db.deleteRows("todate");
     db.commit();
 }
@@ -74,6 +82,9 @@ selectSum = () => {
 
     const db = new localStorageDB("covid19", localStorage);
     let bool;
+    if (!(db.tableExists("todate"))) {
+        createdb()
+    }
     let now = Date.now();
     let api = checkAPI();
     if (api !== false) {
@@ -89,6 +100,7 @@ selectSum = () => {
                 resetAPI();
                 bool = true;
             } else {
+
                 bool = false;
 
             }
@@ -99,7 +111,7 @@ selectSum = () => {
             async: false,
             "url": "https://api.covid19api.com/summary",
             "method": "GET",
-            "timeout": 0,
+            "timeout": 30000,
         };
 
         $.ajax(settings).done(function (response) {
@@ -184,7 +196,7 @@ getInfoCountries = (namecountry) => {
             const settings = {
                 "url": "https://api.covid19api.com/total/country/" + namecountry,
                 "method": "GET",
-                "timeout": 0,
+                "timeout": 30000,
                 "async": false
             };
             $.ajax(settings).done(function (response) {
@@ -211,6 +223,9 @@ getInfoCountries = (namecountry) => {
 getCountryNameFromCountryCode = (code) => {
     const db = new localStorageDB("covid19", localStorage);
     let countryName = '';
+    if (!(db.tableExists("countries"))) {
+        selectSum()
+    }
     let countries = db.queryAll("countries");
 
     for (let i = 0; i < countries.length; i++) {

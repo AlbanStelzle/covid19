@@ -1,15 +1,19 @@
 <tab>
     <div class="container">
 
-        <input class="form-control" onkeyup={ change } placeholder="Rechercher" style="width:300px" type="search"
-               value={ state.keyword }>
-        <select class="form-select" onchange={ updateRows } style="width:100px">
-            <option selected>10</option>
-            <option>20</option>
-            <option>50</option>
-            <option>100</option>
-            <option>200</option>
-        </select>
+        <label>
+            <input class="form-control" onkeyup={ change } placeholder="Rechercher" style="width:300px" type="search"
+                   value={ state.keyword }>
+        </label>
+        <label>
+            <select class="form-select" onchange={ updateRows } style="width:100px">
+                <option selected>10</option>
+                <option>20</option>
+                <option>50</option>
+                <option>100</option>
+                <option>200</option>
+            </select>
+        </label>
 
         <table class="table table-bordered " id="tabCovid">
             <thead>
