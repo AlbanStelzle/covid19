@@ -60,47 +60,39 @@
                 let di = selectcountries(getCountryNameFromCountryCode(countrycode));
                 let diWeek = {};
                 let diWeekDiff = {};
-                for (let i = 0, w = 0, z = 0; i < di.length; i += 7, w++) {
+                for (let i = 0, w = 0; i < di.length; i++) {
                     let active = 0
                     let confirmed = 0
                     let recovered = 0
                     let deaths = 0
                     let dates = null;
-                    if ((di.length - i) < 7) {
-                        for (let y = 0; y < (di.length - i); y++, z++) {
+                    if ((di.length - i) < 4) {
 
-                            active += di[z - (di.length - i)].active
-                            confirmed += di[z - (di.length - i)].confirmed
-                            recovered += di[z - (di.length - i)].recovered
-                            deaths += di[z - (di.length - i)].deaths
-                            dates = di[z - (di.length - i)].date
-                        }
-                        active /= (di.length - i);
-                        confirmed /= (di.length - i);
-                        recovered /= (di.length - i)
-                        deaths /= (di.length - i);
-                    } else {
-                        for (let y = 0; y < 7; y++, z++) {
+                    } else if (i >= 3) {
 
-                            active += di[z].active
-                            confirmed += di[z].confirmed
-                            recovered += di[z].recovered
-                            deaths += di[z].deaths
-                            dates = di[z].date
+                        for (let y = 0, k = -3; y < 7; y++, k++) {
+
+                            active += di[i + k].active
+                            confirmed += di[i + k].confirmed
+                            recovered += di[i + k].recovered
+                            deaths += di[i + k].deaths
+                            dates = di[i + k].date
                         }
                         active /= 7;
                         confirmed /= 7;
                         recovered /= 7
                         deaths /= 7;
 
+                        diWeek[w] = {
+                            active: active,
+                            confirmed: confirmed,
+                            deaths: deaths,
+                            recovered: recovered,
+                            date: dates
+                        }
+                        w++;
                     }
-                    diWeek[w] = {
-                        active: active,
-                        confirmed: confirmed,
-                        deaths: deaths,
-                        recovered: recovered,
-                        date: dates
-                    }
+
                 }
                 for (let w = 0; w < Object.keys(diWeek).length; w++) {
 
@@ -317,8 +309,10 @@
 
                     // graph total confirmed
                     for (let i = 0; i < Object.keys(diWeek).length; i++) {
-                        graph1confirmed.addPoint((diWeek[i].date).slice(5, 10), diWeek[i].confirmed);
-                        graph1confirmed.checkAndChangeyMax(diWeek[i].confirmed);
+                        if (i % 4 == 0) {
+                            graph1confirmed.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString().slice(0, 5)), diWeek[i].confirmed);
+                            graph1confirmed.checkAndChangeyMax(diWeek[i].confirmed);
+                        }
                     }
                     graph1confirmed.setColor("#0055ff");
                     graph1confirmed.drawLine();
@@ -327,9 +321,12 @@
 
                     // graph total deaths
                     for (let i = 0; i < Object.keys(diWeek).length; i++) {
-                        graph1deaths.addPoint((diWeek[i].date).slice(5, 10), diWeek[i].deaths);
-                        //On remet à jour parce qu'il y a beaucoup moins de décès que de cas / recovered
-                        graph1deaths.checkAndChangeyMax(diWeek[i].deaths);
+                        if (i % 4 == 0) {
+
+                            graph1deaths.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString().slice(0, 5)), diWeek[i].deaths);
+                            //On remet à jour parce qu'il y a beaucoup moins de décès que de cas / recovered
+                            graph1deaths.checkAndChangeyMax(diWeek[i].deaths);
+                        }
                     }
                     graph1deaths.setColor("#ff0000");
                     graph1deaths.drawLine();
@@ -338,7 +335,10 @@
 
                     // graph total recovered
                     for (let i = 0; i < Object.keys(diWeek).length; i++) {
-                        graph1recovered.addPoint((diWeek[i].date).slice(5, 10), diWeek[i].recovered);
+                        if (i % 4 == 0) {
+
+                            graph1recovered.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString()), diWeek[i].recovered);
+                        }
                     }
                     graph1recovered.setyMax(graph1confirmed.getyMax());
                     graph1recovered.setColor("#00ff99");
@@ -355,8 +355,11 @@
 
                     // graph total confirmed
                     for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
-                        graph1confirmed.addPoint((diWeekDiff[i].date).slice(5, 10), diWeekDiff[i].confirmed);
-                        graph1confirmed.checkAndChangeyMax(diWeekDiff[i].confirmed);
+                        if (i % 4 == 0) {
+
+                            graph1confirmed.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString().slice(0, 5)), diWeekDiff[i].confirmed);
+                            graph1confirmed.checkAndChangeyMax(diWeekDiff[i].confirmed);
+                        }
                     }
                     graph1confirmed.setColor("#0055ff");
                     graph1confirmed.drawLine();
@@ -365,7 +368,7 @@
 
                     // graph total deaths
                     for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
-                        graph1deaths.addPoint((diWeekDiff[i].date).slice(5, 10), diWeekDiff[i].deaths);
+                        graph1deaths.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString().slice(0, 5)), diWeekDiff[i].deaths);
                         graph1deaths.checkAndChangeyMax(diWeekDiff[i].deaths);
                     }
                     graph1deaths.setColor("#ff0000");
@@ -375,9 +378,11 @@
 
                     // graph total recovered
                     for (let i = 0; i < Object.keys(diWeekDiff).length; i++) {
-                        graph1recovered.addPoint((diWeekDiff[i].date).slice(5, 10), diWeekDiff[i].recovered);
-                        graph1recovered.checkAndChangeyMax(diWeekDiff[i].recovered);
-
+                        if (i % 4 == 0) {
+                            console.log(new Date(diWeekDiff[i].date).toLocaleDateString());
+                            graph1recovered.addPoint((new Date(diWeekDiff[i].date).toLocaleDateString().slice(0, 5)), diWeekDiff[i].recovered);
+                            graph1recovered.checkAndChangeyMax(diWeekDiff[i].recovered);
+                        }
                     }
                     graph1recovered.setColor("#00ff99");
                     graph1recovered.drawLine();
