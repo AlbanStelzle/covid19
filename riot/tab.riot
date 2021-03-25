@@ -70,13 +70,13 @@
                 maxshow: 10,
                 min: 0,
                 pgnb: 0,
-                previousbtn: ""
+                previousbtn: "",
+
             },
 
             get filtered() {
                 return this.state.countries.filter((c) => !this.state.keyword || c.name.toLowerCase().indexOf(this.state.keyword.toLowerCase()) === 0)
             },
-
             onMounted() {
                 const countries = Object.keys(this.props.data.all.countries)
                     .map((key) => ({
@@ -135,8 +135,6 @@
                 }
 
 
-                console.log("min : " + this.state.min)
-                console.log("max : " + this.state.max)
                 this.update();
             },
             updateRows(e) {
@@ -157,6 +155,7 @@
                 this.update();
             }
         }
+
     </script>
 
 </tab>

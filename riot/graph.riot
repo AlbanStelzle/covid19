@@ -56,7 +56,6 @@
             onMounted() {
 
                 let countrycode = location.href.match(/([^\/]*)\/*$/)[1];
-                console.log(countrycode)
                 let di = selectcountries(getCountryNameFromCountryCode(countrycode));
                 let diWeek = {};
                 let diWeekDiff = {};
