@@ -48,7 +48,7 @@
                     <button class="btn btn-primary disabled" id="prec-bttn" onclick={ page } value="prec">Précédent
                     </button>
                 </li>
-                <div each={(data, index) in Array(Math.round((Object.keys(this.state.countries).length)/this.state.maxshow))}>
+                <div each={(data, index) in Array(Math.round((this.state.countryfiltered.length)/this.state.maxshow))}>
                     <button class="btn btn-outline-primary page-item" onclick={ page } value="{index}">{index+1}
                     </button>
 
@@ -71,10 +71,13 @@
                 min: 0,
                 pgnb: 0,
                 previousbtn: "",
+                countryfiltered: {}
 
             },
 
             get filtered() {
+                this.state.countryfiltered = this.state.countries.filter((c) => !this.state.keyword || c.name.toLowerCase().indexOf(this.state.keyword.toLowerCase()) === 0);
+
                 return this.state.countries.filter((c) => !this.state.keyword || c.name.toLowerCase().indexOf(this.state.keyword.toLowerCase()) === 0)
             },
             onMounted() {
@@ -97,29 +100,34 @@
                 this.update({
                     min: 0,
                     keyword: e.target.value,
-                    max: this.state.maxshow
+                    max: this.state.maxshow,
+                    pgnb: 0
 
                 })
+                this.page(null);
             },
             page(e) {
-                if (e.target.value == "prec") {
-                    if (this.state.pgnb != 0) {
-                        this.state.pgnb -= 1;
-                        this.state.min = this.state.pgnb * this.state.maxshow;
-                        this.state.max = this.state.min + this.state.maxshow;
-                    }
+                if (e !== null) {
+                    if (e.target.value == "prec") {
+                        if (this.state.pgnb != 0) {
+                            this.state.pgnb -= 1;
+                            this.state.min = this.state.pgnb * this.state.maxshow;
+                            this.state.max = this.state.min + this.state.maxshow;
+                        }
 
-                } else if (e.target.value == "suiv") {
-                    if (this.state.pgnb != Math.round((Object.keys(this.state.countries).length) / this.state.maxshow)) {
-                        this.state.pgnb++
-                        this.state.min = this.state.pgnb * this.state.maxshow;
-                        this.state.max = this.state.min + this.state.maxshow;
-                    }
-                } else {
+                    } else if (e.target.value == "suiv") {
+                        if (this.state.pgnb != Math.round((this.state.countryfiltered.length) / this.state.maxshow)) {
+                            this.state.pgnb++
+                            this.state.min = this.state.pgnb * this.state.maxshow;
+                            this.state.max = this.state.min + this.state.maxshow;
+                        }
 
-                    this.state.min = parseInt(e.target.value) * this.state.maxshow;
-                    this.state.max = this.state.min + this.state.maxshow;
-                    this.state.pgnb = parseInt(e.target.value)
+                    } else {
+
+                        this.state.min = parseInt(e.target.value) * this.state.maxshow;
+                        this.state.max = this.state.min + this.state.maxshow;
+                        this.state.pgnb = parseInt(e.target.value)
+                    }
                 }
                 if (this.state.pgnb === 0) {
                     document.getElementById("prec-bttn").classList.add("disabled");
@@ -127,13 +135,12 @@
                     document.getElementById("prec-bttn").classList.remove("disabled");
 
                 }
-                if (this.state.pgnb === ((Object.keys(this.state.countries)).length / this.state.maxshow) - 1) {
+                if (this.state.pgnb === Math.round((this.state.countryfiltered.length) / this.state.maxshow) - 1) {
                     document.getElementById("suiv-bttn").classList.add("disabled");
                 } else {
                     document.getElementById("suiv-bttn").classList.remove("disabled");
 
                 }
-
 
                 this.update();
             },
