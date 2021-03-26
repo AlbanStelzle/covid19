@@ -45,13 +45,13 @@
             base: `${loc.protocol}//${loc.host}${loc.pathname ? loc.pathname : ''}`,
             onBeforeMount(props, state) {
                 createdb();
-
-            },
-            onMounted(props, state) {
                 state.info = ({
                     date: "",
                     all: selectSum()
                 })
+            },
+            onMounted(props, state) {
+
                 state.info.date = (state.info.all.globalstat[0].date);
 
             }
